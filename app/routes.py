@@ -166,6 +166,8 @@ def upload_image():
 				image_path=filepath, 
                 user_id=current_user.id
 			)
+               
+			db.session.add()
 			db.session.add(new_item)
 			db.session.commit()
 			return redirect(url_for('uploaded_file', foodname=new_item.name))
