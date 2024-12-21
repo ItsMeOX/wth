@@ -18,15 +18,16 @@
         </tr>
     </thead>
     <tbody>
-        {% for item in items %}
+        {% for item in items|sort(attribute='expiration_date') %}
         <tr class="{% if item.is_expired() %}table-danger{% elif item.is_near_expiry() %}table-warning{% endif %}">
-            <td><a href="{{ url_for('food_detail', food_id=item.id) }}"></a>{{ item.name }}</td>
-            <td>{{ item.category }}</td>
-            <td>{{ item.weight }} g</td>
-            <td>{{ item.expiration_date.strftime('%Y-%m-%d') }}</td>
-            <td>{{ item.calories }} kcal</td>
-        </tr>
-        {% endfor %}
+        <td><a href="{{ url_for('food_detail', food_id=item.id) }}">{{ item.name }}</a></td>
+        <td>{{ item.category }}</td>
+        <td>{{ item.weight }} g</td>
+        <td>{{ item.expiration_date.strftime('%Y-%m-%d') }}</td>
+        <td>{{ item.calories }} kcal</td>
+    </tr>
+{% endfor %}
+
     </tbody>
 </table>
 {% endblock %}

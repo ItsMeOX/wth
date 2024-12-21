@@ -61,6 +61,7 @@
       display: flex;
       height: 150px;
       gap: 20px;
+      overflow-x: scroll;
       /* border: 1px solid red; */
     }
 
@@ -86,9 +87,9 @@
       border: 1px solid rgb(253, 215, 64);
     }
 
-    .list_box::-webkit-scrollbar {
-      display: none;
-    }
+    .list_container::-webkit-scrollbar {
+        display: none;
+      }
 
     .list_box img {
       /* border: 1px solid red; */
@@ -100,6 +101,7 @@
     .item_desc_box {
       display: flex;
       flex-direction: column;
+      align-items: center;
       gap: 0px;
     }
 
@@ -138,16 +140,13 @@
       <div class="list_container">
         {% if expired_items %} {% for item in expired_items %}
         <div class="list_box expired">
-          <img src="{{item.images_url[0].image_url}}" />
-          <div class="list_box expired">
-            <img class="list_box_img" src="/static/uploads/chicken.jpg" />
+          <!-- <img src="{{item.image_urls[0].image_url}}" /> -->
+            <img class="list_box_img" src="{{item.image_urls[0].image_url}}" />
             <div class="item_desc_box">
               <span>{{item.name}}</span>
-              <span>22/05/2024</span>
+              <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
             </div>
-          </div>
-          {{ item.name }} (Expired on {{
-          item.expiration_date.strftime('%Y-%m-%d') }})
+
         </div>
         {% endfor %} {% else %}
         <div class="no_item_box">No expired item</div>
@@ -158,7 +157,7 @@
       <div class="list_container">
         {% if expiring_items %} {% for item in expiring_items %}
         <div class="list_box expiring_soon">
-          <img src="{{item.images_url[0].image_url}}" />
+          <img src="{{item.image_urls[0].image_url}}" />
           <div class="item_desc_box">
             <span>{{ item.name }}</span>
             <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
