@@ -15,9 +15,10 @@
     <!-- FontAwesome for icons -->
     <style>
       .content {
+        box-sizing: border-box;
         padding-top: 20px;
         overflow-x: hidden;
-        margin-bottom: 100px;
+        margin-bottom: 120px;
       }
 
       body::-webkit-scrollbar {
@@ -60,7 +61,7 @@
     </style>
   </head>
   <body>
-    <div class="container mt-4">{% block content %}{% endblock %}</div>
+    <div class="content">{% block content %}{% endblock %}</div>
 
     <!-- Bottom Navbar -->
     <nav class="navbar navbar-expand navbar-dark bg-dark navbar-bottom">
