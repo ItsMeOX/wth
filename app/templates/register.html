@@ -1,12 +1,23 @@
 {% extends "base.html" %}
-{% import "bootstrap5/form.html" as wtf %}
-
-{% block app_content %}
-    <h1>Register</h1>
-    <div class="row">
-        <div class="col-md-4">
-            {{ wtf.render_form(form)}}
-        </div>
+{% block content %}
+<h2 class="text-center">Register</h2>
+<form method="POST" action="{{ url_for('register') }}" class="mt-4 mx-auto" style="max-width: 400px;">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">
+        {{ form.username.label(class="form-label") }}
+        {{ form.username(class="form-control") }}
     </div>
-    
+    <div class="mb-3">
+        {{ form.password.label(class="form-label") }}
+        {{ form.password(class="form-control") }}
+    </div>
+    <div class="mb-3">
+        {{ form.password2.label(class="form-label") }}
+        {{ form.password2(class="form-control") }}
+    </div>
+    <div class="d-grid">
+        {{ form.submit(class="btn btn-primary") }}
+    </div>
+</form>
+<p class="text-center mt-3">Already have an account? <a href="{{ url_for('login') }}">Login here</a>.</p>
 {% endblock %}

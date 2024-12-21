@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">Inventory Management</h2>
+<table class="table table-bordered mt-4">
+    <thead>
+        <tr>
+            <th>Food</th>
+            <th>Category</th>
+            <th>Weight</th>
+            <th>Expiring Date</th>
+            <th>Calories</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in inventory %}
+        <tr class="{% if item.is_expired %}table-danger{% elif item.is_near_expiry %}table-warning{% endif %}">
+            <td>{{ item.name }}</td>
+            <td>{{ item.category }}</td>
+            <td>{{ item.weight }} g</td>
+            <td>{{ item.expiry_date }}</td>
+            <td>{{ item.calories }} kcal</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
