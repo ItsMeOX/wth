@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">Account Settings</h2>
+<div class="card mt-4 mx-auto" style="max-width: 400px;">
+    <div class="card-body">
+        <p><strong>Username:</strong> {{ current_user.username }}</p>
+        <a href="#" class="btn btn-primary">Update Password</a>
+        <a href="{{ url_for('logout') }}" class="btn btn-danger mt-2">Logout</a>
+    </div>
+</div>
+{% endblock %}

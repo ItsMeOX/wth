@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">{{ recipe.name }}</h2>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-fluid">
+    </div>
+    <div class="col-md-6">
+        <h4>Ingredients</h4>
+        <ul>
+            {% for ingredient in recipe.ingredients %}
+            <li>{{ ingredient }}</li>
+            {% endfor %}
+        </ul>
+        <h4>Steps</h4>
+        <ol>
+            {% for step in recipe.steps %}
+            <li>{{ step }}</li>
+            {% endfor %}
+        </ol>
+    </div>
+</div>
+{% endblock %}

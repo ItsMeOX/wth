@@ -1,72 +1,47 @@
-from app import db
-from app import login
-from datetime import datetime 
+from app import db, login
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
-association_table = db.Table('association', 
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('challenge_id', db.Integer, db.ForeignKey('challenge.id'))
-)
-
 @login.user_loader
 def load_user(id):
-	return User.query.get(int(id))
+    """
+    Flask-Login function to load a user by their ID.
+    """
+    return User.query.get(int(id))
 
 class User(UserMixin, db.Model):
-	__tablename__ = 'user'
-	id = db.Column(db.Integer, primary_key=True)
-	username = db.Column(db.String(64), index=True, unique=True)
-	password_hash = db.Column(db.String(128))
-	questions = db.relationship('Question', backref='from_user', 
-								lazy='dynamic')
-	challenges = db.relationship('Challenge', secondary=association_table,
-								backref=db.backref('to_user'),
-								lazy='dynamic')
-	records = db.relationship('TimeRecord', 
-								backref=db.backref('user_challenge'),
-								lazy='dynamic')
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    password_hash = db.Column(db.String(128), nullable=False)
+    pantry_items = db.relationship('PantryItem', backref='owner', lazy='dynamic')
 
-	def set_password(self, password):
-		self.password_hash = generate_password_hash(password)
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
 
-	def check_password(self, password):
-		return check_password_hash(self.password_hash, password)
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
 
-	def __repr__(self):
-		return f'<User {self.username:}>'
+class PantryItem(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable=False)
+    category = db.Column(db.String(64), nullable=False)  # Carbs, Protein, etc.
+    weight = db.Column(db.Float, nullable=False)
+    expiration_date = db.Column(db.Date, nullable=False)
+    calories = db.Column(db.Integer, nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
+    def is_expired(self):
+        return self.expiration_date < datetime.utcnow().date()
 
-class Question(db.Model):
-	__tablename__ = 'question'
-	id = db.Column(db.Integer, primary_key=True)
-	expression = db.Column(db.String(255))
-	answer = db.Column(db.Integer)
+    def is_near_expiry(self):
+        return 0 <= (self.expiration_date - datetime.utcnow().date()).days <= 7
+    
+class Recipe(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    image_url = db.Column(db.String(200), nullable=True)
+    ingredients = db.Column(db.Text, nullable=True)
+    instructions = db.Column(db.Text, nullable=True)
 
-	author = db.Column(db.Integer, db.ForeignKey('user.id'))
-	challenge = db.relationship("Challenge", uselist=False, back_populates="question")
-	
-	def __repr__(self):
-		return f'<Question {self.expression:}>'	
-
-	
-class Challenge(db.Model):
-	__tablename__ = 'challenge'
-	id = db.Column(db.Integer, primary_key=True)
-	question_id = db.Column(db.Integer, db.ForeignKey('question.id'))
-	question = db.relationship("Question", back_populates="challenge")
-	records = db.relationship("TimeRecord")
-	
-	def __repr__(self):
-		return f'<Question {self.question.expression:} for {self.to_user:} from {self.question.from_user:}>'	
-
-
-class TimeRecord(db.Model):
-	__tablename__ = 'timerecord'
-	id = db.Column(db.Integer, primary_key=True)
-	elapsed_time = db.Column(db.Integer)
-	challenge_id = db.Column(db.Integer, db.ForeignKey('challenge.id'))
-	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-#db.create_all()
+    def __repr__(self):
+        return f'<Recipe {self.name}>'

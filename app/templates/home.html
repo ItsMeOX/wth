@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">Welcome, {{ current_user.username }}!</h2>
+<div class="row mt-4">
+    <div class="col-md-6">
+        <h4>Pantry Summary</h4>
+        <ul>
+            <li>Total items: {{ total_items }}</li>
+            <li>Expiring soon: {{ expiring_items }}</li>
+            <li>Expired: {{ expired_items }}</li>
+        </ul>
+    </div>
+    <div class="col-md-6">
+        <h4>What do you want to eat?</h4>
+        <div class="row">
+            {% for recipe in recipes %}
+            <div class="col-4">
+                <a href="{{ url_for('recipe', id=recipe.id) }}">
+                    <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-thumbnail">
+                    <p class="text-center">{{ recipe.name }}</p>
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
