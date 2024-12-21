@@ -45,7 +45,7 @@ class PantryItem(db.Model):
 	calories = db.Column(db.Float)
 	nutrition_content = db.Column(db.Text)
 	image_path = db.Column(db.String(256))
-	# image_urls = db.relationship('FoodImage', backref='food_id', lazy=True)
+	image_urls = db.relationship('FoodImage', backref='food_id', lazy=True)
     
 	def is_expired(self):
 		return self.expiration_date.date() < datetime.utcnow().date()
@@ -58,11 +58,6 @@ class FoodImage(db.Model):
     image_url = db.Column(db.String(255))  # For remote storage (e.g., S3 or URLs)
     image_path = db.Column(db.String(255))  # For local storage (e.g., /static/images/)
     pantry_item_id = db.Column(db.Integer, db.ForeignKey('pantry_item.id'), nullable=False)
-
-    def __init__(self, image_url=None, image_path=None, food_id=None):
-        self.image_url = image_url
-        self.image_path = image_path
-        self.food_id = food_id
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)

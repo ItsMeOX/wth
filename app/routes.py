@@ -10,6 +10,7 @@ from werkzeug.utils import secure_filename
 import os, sys
 from threading import Thread
 from datetime import datetime, timedelta, time
+from sqlalchemy import and_
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
@@ -144,9 +145,14 @@ def account():
 @login_required
 def home():
     total_items = PantryItem.query.filter_by(owner=current_user).count()
-    expiring_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date <= datetime.now() + timedelta(days=7)).all()
-    expired_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date < datetime.now()).all()
-
+    expiring_items = PantryItem.query.filter_by(owner=current_user).filter(
+        and_(
+            PantryItem.expiration_date > datetime.now(),  # Expiration date must be in the future
+            PantryItem.expiration_date <= datetime.now() + timedelta(days=7)  # Expiring in the next 7 days
+        )).all()
+    expired_items = PantryItem.query.filter_by(owner=current_user).filter(
+        PantryItem.expiration_date < datetime.now()  # Expired items
+    ).all()
     recipes = Recipe.query.all()
     
     return render_template('home.html', total_items=total_items, expiring_items=expiring_items, expired_items=expired_items, recipes=recipes, title='Home')
@@ -182,7 +188,8 @@ def upload_image():
             filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
             filepath = filepath.replace('\\', '/')  # Ensure correct file path format
             file.save(filepath)
-
+            if filepath.startswith('app'):
+                filepath = filepath[3:]
             # Create a new pantry item
             new_item = PantryItem(
                 name="Granola",  # This can be dynamic
@@ -191,7 +198,7 @@ def upload_image():
                 used=False,
                 out_of_stock=False,
                 weight=120.0,  # This can be dynamic
-                expiration_date=datetime(2025, 6, 27),
+                expiration_date=datetime(2024, 12, 25),
                 calories=520.0,
                 nutrition_content="Protein: 110g, Carbs: 97g, Fats: 10g",
                 user_id=current_user.id
@@ -216,7 +223,6 @@ def upload_image():
 def uploaded_file(food_id):
     food = PantryItem.query.filter_by(id = food_id).first()
     image_path = food.image_urls[0].image_url
-    if image_path.startswith('app'):
-        image_path = image_path[3:]
+
     flash(f"File uploaded successfully")
     return render_template('upload.html')
