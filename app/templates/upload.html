@@ -1,9 +1,134 @@
-<form
-  method="POST"
-  action="{{ url_for('upload_image') }}"
-  enctype="multipart/form-data"
->
-  <label for="file">Upload an image:</label>
-  <input type="file" name="file" id="file" />
-  <button type="submit">Upload</button>
-</form>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Upload Image</title> -->
+</head>
+<body>
+    <!-- Video element to stream webcam -->
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <!-- Canvas element to capture the image -->
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <br>
+
+    <!-- Button to capture the image -->
+    <button id="capture">Capture Image</button>
+
+    <br><br>
+
+    <!-- Form to upload the captured image -->
+    <form id="uploadForm" method="POST" action="{{ url_for('upload_image') }}" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="file" style="display:none;" />
+        <input type="submit" value="Upload Image" />
+    </form>
+
+    <script>
+        // Access the webcam
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const imageInput = document.getElementById('imageInput');
+
+        // Set up the webcam stream
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(error) {
+                console.log("Error accessing webcam: ", error);
+            });
+
+        // When the capture button is clicked
+        captureButton.addEventListener('click', function() {
+            // Draw the current video frame onto the canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert canvas to a Blob (JPEG or PNG format)
+            canvas.toBlob(function(blob) {
+                // Create a new file from the captured Blob
+                const file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+
+                // Set the file in the hidden file input
+                imageInput.files = dataTransfer.files;
+
+                // Submit the form
+                document.getElementById('uploadForm').submit();
+            });
+        });
+    </script>
+</body>
+</html>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <title>Upload Image</title> -->
+</head>
+<body>
+    <!-- Video element to stream webcam -->
+    <video id="video" width="640" height="480" autoplay></video>
+
+    <!-- Canvas element to capture the image -->
+    <canvas id="canvas" width="640" height="480" style="display:none;"></canvas>
+
+    <br>
+
+    <!-- Button to capture the image -->
+    <button id="capture">Capture Image</button>
+
+    <br><br>
+
+    <!-- Form to upload the captured image -->
+    <form id="uploadForm" method="POST" action="{{ url_for('upload_image') }}" enctype="multipart/form-data">
+        <input type="file" id="imageInput" name="file" style="display:none;" />
+        <input type="submit" value="Upload Image" />
+    </form>
+
+    <script>
+        // Access the webcam
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const captureButton = document.getElementById('capture');
+        const imageInput = document.getElementById('imageInput');
+
+        // Set up the webcam stream
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(error) {
+                console.log("Error accessing webcam: ", error);
+            });
+
+        // When the capture button is clicked
+        captureButton.addEventListener('click', function() {
+            // Draw the current video frame onto the canvas
+            const context = canvas.getContext('2d');
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+            
+            // Convert canvas to a Blob (JPEG or PNG format)
+            canvas.toBlob(function(blob) {
+                // Create a new file from the captured Blob
+                const file = new File([blob], 'captured_image.jpg', { type: 'image/jpeg' });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+
+                // Set the file in the hidden file input
+                imageInput.files = dataTransfer.files;
+
+                // Submit the form
+                document.getElementById('uploadForm').submit();
+            });
+        });
+    </script>
+</body>
+</html>
+

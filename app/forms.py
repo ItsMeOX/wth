@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectMultipleField, IntegerField, HiddenField
-from wtforms.validators import DataRequired, ValidationError, EqualTo
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, SelectMultipleField, FloatField, HiddenField, EmailField, DateField, SubmitField
+from wtforms.validators import DataRequired, ValidationError, EqualTo, Optional
 from app.models import User
 
 class LoginForm(FlaskForm):
@@ -21,19 +21,11 @@ class RegistrationForm(FlaskForm):
 		if user is not None:
 			raise ValidationError('Please use a different username.')
 
-class CreateQuestionForm(FlaskForm):
-	expression = StringField('Math Expression', validators=[DataRequired()])
-	assign_to = SelectMultipleField('Send To', validators=[DataRequired()])
-	submit = SubmitField('Submit')
-
-
-class ChallengeAnswerForm(FlaskForm):
-	challenge_id = HiddenField('Challenge ID')
-	answer = StringField('Answer', validators=[DataRequired()])
-	elapsed_time = HiddenField('Elapsed Time')
-	submit = SubmitField('Submit')
-
-
-
-
-	
+class ProfileUpdateForm(FlaskForm):
+    full_name = StringField('Full Name', validators=[Optional()])
+    email = EmailField('Email', validators=[Optional()])
+    phone_number = StringField('Phone Number', validators=[Optional()])
+    dob = DateField('Date of Birth', format='%Y-%m-%d', validators=[Optional()])
+    weight = FloatField('Weight (kg)', validators=[Optional()])
+    height = FloatField('Height (cm)', validators=[Optional()])
+    submit = SubmitField('Update Profile')

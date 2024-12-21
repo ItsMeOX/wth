@@ -15,14 +15,21 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    full_name = db.Column(db.String(128), nullable=True)  # Optional field
+    email = db.Column(db.String(128), unique=True, nullable=True)  # Optional field
+    phone_number = db.Column(db.String(20), nullable=True)  # Optional field
+    dob = db.Column(db.Date, nullable=True)  # Optional field
+    weight = db.Column(db.Float, nullable=True)  # Optional field
+    height = db.Column(db.Float, nullable=True)  # Optional field
     pantry_items = db.relationship('PantryItem', backref='owner', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-	
+    
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-        
+
+
 class PantryItem(db.Model):
 	__tablename__ = 'pantry_item'
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -37,8 +44,8 @@ class PantryItem(db.Model):
 	added_date = db.Column(db.DateTime, default=datetime.utcnow)
 	calories = db.Column(db.Float)
 	nutrition_content = db.Column(db.Text)
-	# image_path = db.Column(db.String(256))
-	image_urls = db.relationship('FoodImage', backref='food_id', lazy=True)
+	image_path = db.Column(db.String(256))
+	# image_urls = db.relationship('FoodImage', backref='food_id', lazy=True)
     
 	def is_expired(self):
 		return self.expiration_date.date() < datetime.utcnow().date()
@@ -48,11 +55,13 @@ class PantryItem(db.Model):
      
 class FoodImage(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    image_url = db.Column(db.String(255), nullable=False)
+    image_url = db.Column(db.String(255))  # For remote storage (e.g., S3 or URLs)
+    image_path = db.Column(db.String(255))  # For local storage (e.g., /static/images/)
     pantry_item_id = db.Column(db.Integer, db.ForeignKey('pantry_item.id'), nullable=False)
 
-    def __init__(self, image_url, food_id):
+    def __init__(self, image_url=None, image_path=None, food_id=None):
         self.image_url = image_url
+        self.image_path = image_path
         self.food_id = food_id
 
 class Recipe(db.Model):

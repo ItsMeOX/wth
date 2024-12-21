@@ -1,14 +1,15 @@
 from app import application
 from flask import render_template, flash, redirect, url_for
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, ProfileUpdateForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, PantryItem, Recipe, FoodImage
 from urllib.parse import urlparse, unquote
 from app import db
 from flask import request 
 from werkzeug.utils import secure_filename
-import os
-from datetime import datetime, timedelta
+import os, sys
+from threading import Thread
+from datetime import datetime, timedelta, time
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
@@ -59,13 +60,13 @@ def inventory():
         db.session.commit()
         flash('Item added successfully!')
     items = PantryItem.query.filter_by(user_id=current_user.id).all()
-    # print(items[0].name)
     return render_template('inventory.html', title='Inventory', items=items)
 
 @application.route('/food/<int:food_id>')
 def food_detail(food_id):
     food_item = PantryItem.query.get_or_404(food_id)
     return render_template('food_detail.html', food=food_item)
+
 
 def get_ai_recipe_suggestions(selected_items):
     """
@@ -114,8 +115,29 @@ def recipe(id):
 @application.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', user=current_user)
+    form = ProfileUpdateForm()
 
+    if form.validate_on_submit():
+        current_user.full_name = form.full_name.data
+        current_user.email = form.email.data
+        current_user.phone_number = form.phone_number.data
+        current_user.dob = form.dob.data
+        current_user.weight = form.weight.data
+        current_user.height = form.height.data
+
+        db.session.commit()
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('account'))
+
+    # Pre-fill the form with current user data
+    form.full_name.data = current_user.full_name
+    form.email.data = current_user.email
+    form.phone_number.data = current_user.phone_number
+    form.dob.data = current_user.dob
+    form.weight.data = current_user.weight
+    form.height.data = current_user.height
+
+    return render_template('account.html', title='Account', form=form)
 
 @application.route('/')
 @application.route('/home')
@@ -181,3 +203,44 @@ def uploaded_file(foodname):
         image_path = image_path[3:]
     print(image_path)
     return f"File uploaded successfully: <img src='{image_path}' />"
+
+# @application.route('/process_image', methods=['POST'])
+# @login_required
+# def process_image():
+#     if 'file' not in request.files:
+#         return jsonify({'error': 'No file part'}), 400
+
+#     file = request.files['file']
+#     if file.filename == '':
+#         return jsonify({'error': 'No selected file'}), 400
+
+#     if file and allowed_file(file.filename):
+#         # Save the file to the upload folder
+#         filename = secure_filename(file.filename)
+#         filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
+#         file.save(filepath)
+
+#         # Simulate Gemini API processing
+#         processed_data = {
+#             "name": "Sample Food",
+#             "category": "Dessert",
+#             "calories": 150,
+#             "nutrition_content": "Protein: 5g, Carbs: 20g, Fats: 2g"
+#         }
+
+#         # Save the processed data in the database
+#         new_item = PantryItem(
+#             name=processed_data['name'],
+#             category=processed_data['category'],
+#             weight=150.0,  # Placeholder value
+#             expiration_date=datetime.now() + timedelta(days=30),  # Placeholder expiration date
+#             calories=processed_data['calories'],
+#             nutrition_content=processed_data['nutrition_content'],
+#             owner=current_user
+#         )
+#         db.session.add(new_item)
+#         db.session.commit()
+
+#         return jsonify({'message': f'Image processed and item {new_item.name} added to pantry.'}), 200
+
+#     return jsonify({'error': 'Invalid file type'}), 400
