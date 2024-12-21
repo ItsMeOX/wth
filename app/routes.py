@@ -51,14 +51,15 @@ def inventory():
             name=request.form['name'],
             category=request.form['category'],
             weight=request.form['weight'],
-            expiration_date=datetime.strptime(request.form['expiration_date'], '%Y-%m-%d'),
+            expiration_date=datetime.strptime(request.form['expiration_date'], '%Y-%m-%d').date(),
             calories=request.form['calories'],
             owner=current_user
         )
         db.session.add(item)
         db.session.commit()
         flash('Item added successfully!')
-    items = PantryItem.query.filter_by(owner=current_user).all()
+    items = PantryItem.query.filter_by(user_id=current_user.id).all()
+    print(items[0].name)
     return render_template('inventory.html', title='Inventory', items=items)
 
 @app.route('/food/<int:food_id>')
@@ -150,25 +151,36 @@ def upload_image():
 		if file and allowed_file(file.filename):
 			filename = secure_filename(file.filename)
 			filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
+			filepath = filepath.replace('\\', '/')
 			file.save(filepath)
 			new_item = PantryItem(
-				name="Granola Bar",
-				brand="Nature's Valley",
-				type="snack",
+				name="Gronola",
+				brand="no brand",
+				category="dessert",
 				used=False,
 				out_of_stock=False,
-				weight=50.0,
-				expiry_date=datetime(2025, 12, 31),
-				calories_content=200.0,
-				nutrition_content="Protein: 5g, Carbs: 35g, Fats: 7g",
-				image_path=filepath
+				weight=120.0,
+				expiration_date=datetime(2025, 6, 27),
+				calories=520.0,
+				nutrition_content="Protein: 110g, Carbs: 97g, Fats: 10g",
+				image_path=filepath, 
+                user_id=current_user.id
 			)
-			print(filepath)
 			db.session.add(new_item)
 			db.session.commit()
-			return redirect(url_for('uploaded_file', filename=filename))
+			return redirect(url_for('uploaded_file', foodname=new_item.name))
 	return render_template('upload.html')
 
 @application.route('/uploads/<foodname>')
+<<<<<<< HEAD
 def uploaded_file(filename):
     return f"File uploaded successfully: <img src='/static/uploads/{filename}' />"
+=======
+def uploaded_file(foodname):
+    food = PantryItem.query.filter_by(name = foodname).first()
+    image_path = food.image_path
+    if image_path.startswith('app'):
+        image_path = image_path[3:]
+    print(image_path)
+    return f"File uploaded successfully: <img src='{image_path}' />"
+>>>>>>> e1c1f46d7261dd794d4be22e830d7d877f3f1561

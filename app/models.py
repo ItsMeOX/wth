@@ -34,7 +34,7 @@ class PantryItem(db.Model):
 	out_of_stock = db.Column(db.Boolean, default=False)
 	weight = db.Column(db.Float)
 	expiration_date = db.Column(db.DateTime, nullable=False)
-	added_date = db.Column(db.DateTime, default=time.time)
+	added_date = db.Column(db.DateTime, default=datetime.utcnow)
 	calories = db.Column(db.Float)
 	nutrition_content = db.Column(db.Text)
 	image_path = db.Column(db.String(256))
@@ -44,6 +44,7 @@ class PantryItem(db.Model):
 		return self.expiration_date.date() < datetime.utcnow().date()
 
 	def is_near_expiry(self):
+<<<<<<< HEAD
 		return 0 <= (self.expiration_date.date() - datetime.utcnow().date()).days <= 7
      
 class FoodImage(db.Model):
@@ -54,6 +55,9 @@ class FoodImage(db.Model):
     def __init__(self, image_url, food_id):
         self.image_url = image_url
         self.food_id = food_id
+=======
+		return 0 <= (self.expiration_date.date() - datetime.utcnow().date()).days <= 31
+>>>>>>> e1c1f46d7261dd794d4be22e830d7d877f3f1561
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)
