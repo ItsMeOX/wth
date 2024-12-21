@@ -3,6 +3,12 @@
 {% block content %}
 <head>
     <meta charset="UTF-8">
+    <style>
+      .take_photo{
+        color: white;
+      }
+
+    </style>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -37,7 +43,8 @@
   
 
 <div class="container">
-  <h1>Take a Photo of Your Food!</h1>
+  
+  <h1 class="take_photo">Take a Photo of Your Food!</h1>
   <!-- Video element to stream webcam -->
   <video id="video" autoplay></video>
   <canvas id="canvas" style="border: 1px solid red; display: none"></canvas>
