@@ -21,4 +21,19 @@ class RegistrationForm(FlaskForm):
 		if user is not None:
 			raise ValidationError('Please use a different username.')
 
+class CreateQuestionForm(FlaskForm):
+	expression = StringField('Math Expression', validators=[DataRequired()])
+	assign_to = SelectMultipleField('Send To', validators=[DataRequired()])
+	submit = SubmitField('Submit')
 
+
+class ChallengeAnswerForm(FlaskForm):
+	challenge_id = HiddenField('Challenge ID')
+	answer = StringField('Answer', validators=[DataRequired()])
+	elapsed_time = HiddenField('Elapsed Time')
+	submit = SubmitField('Submit')
+
+
+
+
+	

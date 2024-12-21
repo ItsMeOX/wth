@@ -8,6 +8,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 def load_user(id):
 	return User.query.get(int(id))
 
+association_table = db.Table('association', 
+    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
+    db.Column('challenge_id', db.Integer, db.ForeignKey('challenge.id'))
+)
+
 @login.user_loader
 def load_user(id):
 	return User.query.get(int(id))

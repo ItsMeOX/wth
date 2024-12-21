@@ -15,7 +15,7 @@ class PrefixMiddleware(object):
 
     def clear_prefix(self, s, prefix):
         if len(prefix) > 0 and s.startswith(prefix):
-            return self.clear_prefix(s[len(prefix)-1:], prefix)
+            return self.clear_prefix(s[len(prefix) :], prefix)
         else:
             return s
 
