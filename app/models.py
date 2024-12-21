@@ -38,12 +38,22 @@ class PantryItem(db.Model):
 	calories = db.Column(db.Float)
 	nutrition_content = db.Column(db.Text)
 	image_path = db.Column(db.String(256))
+	image_urls = db.relationship('FoodImage', backref='food', lazy=True)
     
 	def is_expired(self):
-		return self.expiration_date < datetime.utcnow().date()
+		return self.expiration_date.date() < datetime.utcnow().date()
 
 	def is_near_expiry(self):
-		return 0 <= (self.expiration_date - datetime.utcnow().date()).days <= 7
+		return 0 <= (self.expiration_date.date() - datetime.utcnow().date()).days <= 7
+     
+class FoodImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    image_url = db.Column(db.String(255), nullable=False)
+    food_id = db.Column(db.Integer, db.ForeignKey('food_item.id'), nullable=False)
+
+    def __init__(self, image_url, food_id):
+        self.image_url = image_url
+        self.food_id = food_id
 
 class Recipe(db.Model):
     id = db.Column(db.Integer, primary_key=True)

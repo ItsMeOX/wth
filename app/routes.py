@@ -2,7 +2,7 @@ from app import application
 from flask import render_template, flash, redirect, url_for
 from app.forms import LoginForm, RegistrationForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, PantryItem, Recipe
+from app.models import User, PantryItem, Recipe, FoodImage
 from urllib.parse import urlparse, unquote
 from app import db
 from flask import request 
@@ -10,14 +10,7 @@ from werkzeug.utils import secure_filename
 import os
 from datetime import datetime, timedelta
 
-@application.route('/')
-@application.route('/index/')
-@login_required
-def index():
-	prefix = application.wsgi_app.prefix[:-1]
-	return render_template('index.html', title='Home', prefix=prefix)
-
-@application.route('/login/', methods=['GET', 'POST'])
+@application.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('home'))
@@ -68,6 +61,11 @@ def inventory():
     items = PantryItem.query.filter_by(owner=current_user).all()
     return render_template('inventory.html', title='Inventory', items=items)
 
+@app.route('/food/<int:food_id>')
+def food_detail(food_id):
+    food_item = PantryItem.query.get_or_404(food_id)
+    return render_template('food_detail.html', food=food_item)
+
 def get_ai_recipe_suggestions(selected_items):
     """
     Replace this function with actual AI logic or API integration to suggest recipes.
@@ -100,12 +98,10 @@ def recipes():
     items = PantryItem.query.filter_by(owner=current_user).all()
     return render_template('recipes.html', title='Recipe Suggestion', items=items)
 
-
 @application.route('/recipe/<int:id>')
 @login_required
 def recipe(id):
-    # Mock fetching the recipe by ID (replace with actual database query if needed)
-    suggested_recipes = get_ai_recipe_suggestions([])  # Mocked suggestions
+    suggested_recipes = get_ai_recipe_suggestions([])
     recipe = next((r for r in suggested_recipes if r["id"] == id), None)
     
     if not recipe:
@@ -119,18 +115,17 @@ def recipe(id):
 def account():
     return render_template('account.html', user=current_user)
 
+
+@application.route('/')
 @application.route('/home')
 @login_required
 def home():
-    # Fetch pantry item data for the current user
     total_items = PantryItem.query.filter_by(owner=current_user).count()
-    expiring_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date <= datetime.now() + timedelta(days=7)).count()
-    expired_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date < datetime.now()).count()
+    expiring_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date <= datetime.now() + timedelta(days=7)).all()
+    expired_items = PantryItem.query.filter_by(owner=current_user).filter(PantryItem.expiration_date < datetime.now()).all()
 
-    # Fetch a list of recipes (this part assumes you have a Recipe model, adjust as needed)
-    recipes = Recipe.query.all()  # Replace with your logic to get relevant recipes
+    recipes = Recipe.query.all()
     
-    # Pass the data to the template
     return render_template('home.html', total_items=total_items, expiring_items=expiring_items, expired_items=expired_items, recipes=recipes, title='Home')
 
 application.config['UPLOAD_FOLDER'] = 'app/static/uploads'  # Directory to store the uploaded images
@@ -177,4 +172,3 @@ def upload_image():
 @application.route('/uploads/<foodname>')
 def uploaded_file(filename):
     return f"File uploaded successfully: <img src='/static/uploads/{filename}' />"
-

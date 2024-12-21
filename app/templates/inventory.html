@@ -14,7 +14,7 @@
     <tbody>
         {% for item in inventory %}
         <tr class="{% if item.is_expired %}table-danger{% elif item.is_near_expiry %}table-warning{% endif %}">
-            <td>{{ item.name }}</td>
+            <td><a href="{{ url_for('food_detail', food_id=item.id) }}">{{ item.name }}</a></td>
             <td>{{ item.category }}</td>
             <td>{{ item.weight }} g</td>
             <td>{{ item.expiry_date }}</td>

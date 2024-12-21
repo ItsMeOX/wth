@@ -6,22 +6,41 @@
         <h4>Pantry Summary</h4>
         <ul>
             <li>Total items: {{ total_items }}</li>
-            <li>Expiring soon: {{ expiring_items }}</li>
-            <li>Expired: {{ expired_items }}</li>
+            <li>Expired items: {{ expired_items|length }}</li>
+            <li>Expiring soon: {{ expiring_items|length }}</li>
         </ul>
     </div>
     <div class="col-md-6">
-        <h4>What do you want to eat?</h4>
-        <div class="row">
-            {% for recipe in recipes %}
-            <div class="col-4">
-                <a href="{{ url_for('recipe', id=recipe.id) }}">
-                    <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-thumbnail">
-                    <p class="text-center">{{ recipe.name }}</p>
-                </a>
-            </div>
+        <h4>Pantry Items</h4>
+        <h5>Expired Items</h5>
+        <ul>
+            {% for item in expired_items %}
+                <li style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 5px; margin-bottom: 5px; border-radius: 5px;">
+                    {{ item.name }} (Expired on {{ item.expiration_date.strftime('%Y-%m-%d') }})
+                </li>
             {% endfor %}
-        </div>
+        </ul>
+        
+        <h5>Expiring Soon</h5>
+        <ul>
+            {% for item in expiring_items %}
+                <li style="background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 5px; margin-bottom: 5px; border-radius: 5px;">
+                    {{ item.name }} (Expires on {{ item.expiration_date.strftime('%Y-%m-%d') }})
+                </li>
+            {% endfor %}
+        </ul>
     </div>
+</div>
+
+<h4>What do you want to eat?</h4>
+<div class="row">
+    {% for recipe in recipes %}
+    <div class="col-4">
+        <a href="{{ url_for('recipe', id=recipe.id) }}">
+            <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-thumbnail">
+            <p class="text-center">{{ recipe.name }}</p>
+        </a>
+    </div>
+    {% endfor %}
 </div>
 {% endblock %}
