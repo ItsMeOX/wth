@@ -1,17 +1,8 @@
 from app import db
 from app import login
-from datetime import datetime 
+import time
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
-
-@login.user_loader
-def load_user(id):
-	return User.query.get(int(id))
-
-association_table = db.Table('association', 
-    db.Column('user_id', db.Integer, db.ForeignKey('user.id')),
-    db.Column('challenge_id', db.Integer, db.ForeignKey('challenge.id'))
-)
 
 @login.user_loader
 def load_user(id):
@@ -39,6 +30,7 @@ class Food(db.Model):
 	out_of_stock = db.Column(db.Boolean)
 	weight = db.Column(db.Float)
 	expiry_date = db.Column(db.DateTime, nullable=False)
-	added_date = db.Column(db.DateTime)
+	added_date = db.Column(db.DateTime, default=time.time)
 	calories_content = db.Column(db.Float)
 	nutrition_content = db.Column(db.Text)
+	image_path = db.Column(db.String(256))

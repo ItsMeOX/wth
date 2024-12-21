@@ -1,0 +1,9 @@
+<form
+  method="POST"
+  action="{{ url_for('upload_image') }}"
+  enctype="multipart/form-data"
+>
+  <label for="file">Upload an image:</label>
+  <input type="file" name="file" id="file" />
+  <button type="submit">Upload</button>
+</form>

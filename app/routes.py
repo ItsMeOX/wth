@@ -2,12 +2,14 @@ from app import application
 from flask import render_template, flash, redirect, url_for
 from app.forms import LoginForm, RegistrationForm, CreateQuestionForm, ChallengeAnswerForm
 from flask_login import current_user, login_user, logout_user, login_required
-from app.models import User, Question, Challenge, TimeRecord
+from app.models import User, Food
 from urllib.parse import urlparse, unquote
 from app import db
 from flask import request 
 from app.serverlibrary import mergesort, EvaluateExpression, get_smallest_three 
-
+from werkzeug.utils import secure_filename
+import os
+from datetime import datetime
 
 @application.route('/')
 @application.route('/index/')
@@ -15,92 +17,6 @@ from app.serverlibrary import mergesort, EvaluateExpression, get_smallest_three
 def index():
 	prefix = application.wsgi_app.prefix[:-1]
 	return render_template('index.html', title='Home', prefix=prefix)
-
-@application.route('/users/')
-@login_required
-def users():
-	prefix = application.wsgi_app.prefix[:-1]
-	users = User.query.all()	
-	mergesort(users, lambda item: item.username)
-	usernames = [u.username for u in users]
-	return render_template('users.html', title='Users',
-							users=usernames, prefix=prefix)
-
-@application.route('/questions/', methods=['GET','POST'])
-@login_required
-def questions():
-	prefix = application.wsgi_app.prefix[:-1]
-	questions = current_user.questions.all()
-	form = CreateQuestionForm()
-	users = User.query.all()
-	userlist = [(u.username, u.username) for u in users]
-	form.assign_to.choices=userlist
-	if form.validate_on_submit():
-		question = Question(expression=form.expression.data)
-		evalans = EvaluateExpression(form.expression.data)
-		question.answer = evalans.evaluate()
-		question.author = current_user.id 
-		challenge = Challenge(question=question)
-		username_to = []
-		for name in form.assign_to.data:
-			username_to.append(User.query.filter_by(username=name).first())
-
-		challenge.to_user = username_to
-		db.session.add(question)
-		db.session.add(challenge)
-		db.session.commit()
-		flash('Congratulations, you have created a new question.')
-		questions = current_user.questions.all()
-	return render_template('questions.html', title='Questions', 
-							user=current_user,
-							questions=questions,
-							form=form, prefix=prefix)
-
-@application.route('/challenges/', methods=['GET', 'POST'])
-@login_required
-def challenges():
-	prefix = application.wsgi_app.prefix[:-1]
-	challenges = current_user.challenges.all()
-	form = ChallengeAnswerForm()
-	recordsquery = TimeRecord.query.filter_by(user_id=current_user.id).all()
-	records = { c.id: r.elapsed_time for r in recordsquery for c in challenges if r.challenge_id== c.id}
-	if form.validate_on_submit():
-		record = TimeRecord()
-		record.elapsed_time = int(form.elapsed_time.data)
-		record.challenge_id = int(form.challenge_id.data)
-		record.user_id = current_user.id
-		answer = form.answer.data
-		challenge = Challenge.query.filter_by(id=form.challenge_id.data).first()
-		if int(answer) == int(challenge.question.answer):
-			db.session.add(record)
-			db.session.commit()
-			challenges = current_user.challenges.all()
-			recordsquery = TimeRecord.query.filter_by(user_id=current_user.id).all()
-			records = { c.id: r.elapsed_time for r in recordsquery for c in challenges if r.challenge_id== c.id}
-			form.answer.data = ""
-			return render_template('challenges.html', title='Challenges',
-							user=current_user,
-							challenges=challenges,
-							form = form,
-							records = records, prefix=prefix)
-		
-		return redirect(url_for('challenges'))
-	form.answer.data=""
-	return render_template('challenges.html', title='Challenges',
-							user=current_user,
-							challenges=challenges,
-							form = form,
-							records = records, prefix=prefix)
-
-@application.route('/halloffame/')
-def halloffame():
-	prefix = application.wsgi_app.prefix[:-1]
-	challenges = Challenge.query.all()
-	records = { c.id:get_smallest_three(c) for c in challenges}
-	print(records)
-	return render_template('halloffame.html', title="Hall of Fame",
-							challenges=challenges,
-							records=records, prefix=prefix)
 
 @application.route('/login/', methods=['GET', 'POST'])
 def login():
@@ -146,4 +62,48 @@ def register():
 		flash('Congratulations, you are now a registered user.')
 		return redirect(url_for('login'))
 	return render_template('register.html', title='Register', form=form, prefix=prefix)
+
+application.config['UPLOAD_FOLDER'] = 'app/static/uploads'  # Directory to store the uploaded images
+application.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}  # Allowed image file extensions
+def allowed_file(filename):
+	'''
+	Check if the file has allowed extensions.
+	'''
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in application.config['ALLOWED_EXTENSIONS']
+
+@application.route('/upload', methods=['GET', 'POST'])
+def upload_image():
+	if not os.path.exists(application.config['UPLOAD_FOLDER']):
+		os.makedirs(application.config['UPLOAD_FOLDER'])
+
+	if request.method == 'POST':
+		if 'file' not in request.files:
+			return 'No file part', 400
+		file = request.files['file']
+		if file.filename == '':
+			return 'No selected file', 400
+		if file and allowed_file(file.filename):
+			filename = secure_filename(file.filename)
+			filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
+			file.save(filepath)
+			# food = Food(
+			# 	name="Granola Bar",
+			# 	brand="Nature's Valley",
+			# 	type="snack",
+			# 	used=False,
+			# 	out_of_stock=False,
+			# 	weight=50.0,
+			# 	expiry_date=datetime(2025, 12, 31),
+			# 	calories_content=200.0,
+			# 	nutrition_content="Protein: 5g, Carbs: 35g, Fats: 7g",
+			# 	image_path=filepath
+			# )
+			# db.session.add(food)
+			# db.session.commit()
+			return redirect(url_for('uploaded_file', filename=filename))
+	return render_template('upload.html')
+
+@application.route('/uploads/<foodname>')
+def uploaded_file(filename):
+    return f"File uploaded successfully: <img src='/static/uploads/{filename}' />"
 

@@ -34,10 +34,6 @@
           <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
             <ul class="navbar-nav mr-auto">
               <li class="nav-item"><a class="nav-link" href="{{prefix}}{{ url_for('index') }}">Home</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{prefix}}{{ url_for('questions') }}">Questions</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{prefix}}{{ url_for('challenges') }}">Challenges</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{prefix}}{{ url_for('halloffame') }}">Hall of Fame</a></li>
-              <li class="nav-item"><a class="nav-link" href="{{prefix}}{{ url_for('users') }}">Users</a></li>
             </ul>
             <ul class="navbar-nav navbar-right">
               {% if current_user.is_anonymous %}
@@ -64,35 +60,6 @@
     
         {% block app_content %}{% endblock %}
       </div>
-<<<<<<< HEAD
-    </div>
-  </nav>
-{% endblock %}
-
-{% block content %}
-  <div class="container">
-    {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for message in messages %}
-      <div class="alert alert-info" role="alert">{{ message }}</div>
-      {% endfor %}
-    {% endif %}
-    {% endwith %}
-
-    {% block app_content %}{% endblock %}
-  </div>
-{% endblock %}
-
-{% block scripts %}
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-<script type="module">
-  import * as library from './static/__target__/clientlibrary.js'; 
-  window.library = library;
-  </script>
-  {{ bootstrap.load_js() }}
-{% endblock %}
-=======
     {% endblock %}
     
     {% block scripts %}
@@ -101,4 +68,3 @@
     {% endblock %}
   </body>
 </html>
->>>>>>> main
