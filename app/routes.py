@@ -66,21 +66,53 @@ def inventory():
         db.session.commit()
         flash('Item added successfully!')
     items = PantryItem.query.filter_by(owner=current_user).all()
-    return render_template('inventory.html', items=items)
+    return render_template('inventory.html', title='Inventory', items=items)
 
-def get_recipe_suggestion(selected_items):
-    # Replace this with actual API call
-    return {"name": "Spaghetti Bolognese", "ingredients": selected_items}
+def get_ai_recipe_suggestions(selected_items):
+    """
+    Replace this function with actual AI logic or API integration to suggest recipes.
+    """
+    # Mock data for demo purposes
+    return [
+        {
+            "id": 1,
+            "name": "Spaghetti Bolognese",
+            "image_url": "https://example.com/spaghetti.jpg",
+            "ingredients": ["spaghetti", "ground beef", "tomato sauce"],
+            "steps": ["Boil spaghetti", "Cook ground beef", "Mix with sauce"]
+        },
+        {
+            "id": 2,
+            "name": "Chicken Salad",
+            "image_url": "https://example.com/salad.jpg",
+            "ingredients": ["chicken", "lettuce", "olive oil"],
+            "steps": ["Grill chicken", "Chop lettuce", "Mix with dressing"]
+        }
+    ]
 
 @application.route('/recipes', methods=['GET', 'POST'])
 @login_required
 def recipes():
     if request.method == 'POST':
         selected_items = request.form.getlist('items')
-        recipe = get_recipe_suggestion(selected_items)
+        recipe =get_ai_recipe_suggestions(selected_items)
         return render_template('recipe.html', recipe=recipe)
     items = PantryItem.query.filter_by(owner=current_user).all()
-    return render_template('recipes.html', items=items)
+    return render_template('recipes.html', title='Recipe Suggestion', items=items)
+
+
+@application.route('/recipe/<int:id>')
+@login_required
+def recipe(id):
+    # Mock fetching the recipe by ID (replace with actual database query if needed)
+    suggested_recipes = get_ai_recipe_suggestions([])  # Mocked suggestions
+    recipe = next((r for r in suggested_recipes if r["id"] == id), None)
+    
+    if not recipe:
+        flash("Recipe not found.")
+        return redirect(url_for('recipes'))
+    
+    return render_template('recipe.html', recipe=recipe)
 
 @application.route('/account', methods=['GET', 'POST'])
 @login_required
@@ -99,7 +131,7 @@ def home():
     recipes = Recipe.query.all()  # Replace with your logic to get relevant recipes
     
     # Pass the data to the template
-    return render_template('home.html', total_items=total_items, expiring_items=expiring_items, expired_items=expired_items, recipes=recipes)
+    return render_template('home.html', total_items=total_items, expiring_items=expiring_items, expired_items=expired_items, recipes=recipes, title='Home')
 
 application.config['UPLOAD_FOLDER'] = 'app/static/uploads'  # Directory to store the uploaded images
 application.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg'}  # Allowed image file extensions
