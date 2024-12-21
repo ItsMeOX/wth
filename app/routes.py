@@ -160,43 +160,61 @@ def allowed_file(filename):
 
 @application.route('/upload', methods=['GET', 'POST'])
 def upload_image():
-	if not os.path.exists(application.config['UPLOAD_FOLDER']):
-		os.makedirs(application.config['UPLOAD_FOLDER'])
+    # Ensure the upload folder exists
+    if not os.path.exists(application.config['UPLOAD_FOLDER']):
+        os.makedirs(application.config['UPLOAD_FOLDER'])
 
-	if request.method == 'POST':
-		if 'file' not in request.files:
-			return 'No file part', 400
-		file = request.files['file']
-		if file.filename == '':
-			return 'No selected file', 400
-		if file and allowed_file(file.filename):
-			filename = secure_filename(file.filename)
-			filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
-			filepath = filepath.replace('\\', '/')
-			file.save(filepath)
-			new_item = PantryItem(
-				name="Gronola",
-				brand="no brand",
-				category="dessert",
-				used=False,
-				out_of_stock=False,
-				weight=120.0,
-				expiration_date=datetime(2025, 6, 27),
-				calories=520.0,
-				nutrition_content="Protein: 110g, Carbs: 97g, Fats: 10g",
-				image_path=filepath, 
+    if request.method == 'POST':
+        # Check if the file is in the request
+        if 'file' not in request.files:
+            return 'No file part', 400
+
+        file = request.files['file']
+        
+        # If no file selected
+        if file.filename == '':
+            return 'No selected file', 400
+
+        # Check if the file is allowed
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
+            filepath = filepath.replace('\\', '/')  # Ensure correct file path format
+            file.save(filepath)
+
+            # Create a new pantry item
+            new_item = PantryItem(
+                name="Granola",  # This can be dynamic
+                brand="No Brand",  # This can be dynamic
+                category="Dessert",  # This can be dynamic
+                used=False,
+                out_of_stock=False,
+                weight=120.0,  # This can be dynamic
+                expiration_date=datetime(2025, 6, 27),
+                calories=520.0,
+                nutrition_content="Protein: 110g, Carbs: 97g, Fats: 10g",
                 user_id=current_user.id
-			)
-			db.session.add(new_item)
-			db.session.commit()
-			return redirect(url_for('uploaded_file', foodname=new_item.name))
-	return render_template('upload.html')
+            )
+            db.session.add(new_item)
+            db.session.commit()
+
+            # Get the ID of the newly added pantry item
+            food_id = new_item.id
+
+            # Create a FoodImage instance and associate it with the pantry item
+            new_img = FoodImage(image_url=filepath, pantry_item_id=food_id)
+            db.session.add(new_img)
+            db.session.commit()
+
+            # Redirect to the uploaded file page or success page
+            return redirect(url_for('uploaded_file', foodname=new_item.name))
+
+    return render_template('upload.html')
 
 @application.route('/uploads/<foodname>')
 def uploaded_file(foodname):
     food = PantryItem.query.filter_by(name = foodname).first()
-    image_path = food.image_path
-    if image_path.startswith('app'):
-        image_path = image_path[3:]
-    print(image_path)
-    return f"File uploaded successfully: <img src='{image_path}' />"
+    image_path = food.image_urls[0]
+    
+    flash(f"File uploaded successfully")
+    return render_template('upload.html')
