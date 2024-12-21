@@ -124,20 +124,21 @@ def upload_image():
 			filename = secure_filename(file.filename)
 			filepath = os.path.join(application.config['UPLOAD_FOLDER'], filename)
 			file.save(filepath)
-			# food = Food(
-			# 	name="Granola Bar",
-			# 	brand="Nature's Valley",
-			# 	type="snack",
-			# 	used=False,
-			# 	out_of_stock=False,
-			# 	weight=50.0,
-			# 	expiry_date=datetime(2025, 12, 31),
-			# 	calories_content=200.0,
-			# 	nutrition_content="Protein: 5g, Carbs: 35g, Fats: 7g",
-			# 	image_path=filepath
-			# )
-			# db.session.add(food)
-			# db.session.commit()
+			new_item = PantryItem(
+				name="Granola Bar",
+				brand="Nature's Valley",
+				type="snack",
+				used=False,
+				out_of_stock=False,
+				weight=50.0,
+				expiry_date=datetime(2025, 12, 31),
+				calories_content=200.0,
+				nutrition_content="Protein: 5g, Carbs: 35g, Fats: 7g",
+				image_path=filepath
+			)
+			print(filepath)
+			db.session.add(new_item)
+			db.session.commit()
 			return redirect(url_for('uploaded_file', filename=filename))
 	return render_template('upload.html')
 
