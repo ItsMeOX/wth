@@ -7,8 +7,9 @@ from urllib.parse import urlparse, unquote
 from app import db
 from flask import request 
 from werkzeug.utils import secure_filename
-import os
-from datetime import datetime, timedelta
+import os, sys
+from threading import Thread
+from datetime import datetime, timedelta, time
 
 @application.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,6 +66,7 @@ def inventory():
 def food_detail(food_id):
     food_item = PantryItem.query.get_or_404(food_id)
     return render_template('food_detail.html', food=food_item)
+
 
 def get_ai_recipe_suggestions(selected_items):
     """
@@ -136,7 +138,6 @@ def account():
     form.height.data = current_user.height
 
     return render_template('account.html', title='Account', form=form)
-
 
 @application.route('/')
 @application.route('/home')

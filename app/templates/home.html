@@ -1,46 +1,191 @@
-{% extends "base.html" %}
-{% block content %}
-<h2 class="text-center">Welcome, {{ current_user.username }}!</h2>
-<div class="row mt-4">
-    <div class="col-md-6">
-        <h4>Pantry Summary</h4>
-        <ul>
-            <li>Total items: {{ total_items }}</li>
-            <li>Expired items: {{ expired_items|length }}</li>
-            <li>Expiring soon: {{ expiring_items|length }}</li>
-        </ul>
-    </div>
-    <div class="col-md-6">
-        <h4>Pantry Items</h4>
-        <h5>Expired Items</h5>
-        <ul>
-            {% for item in expired_items %}
-                <li style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 5px; margin-bottom: 5px; border-radius: 5px;">
-                    {{ item.name }} (Expired on {{ item.expiration_date.strftime('%Y-%m-%d') }})
-                </li>
-            {% endfor %}
-        </ul>
-        
-        <h5>Expiring Soon</h5>
-        <ul>
-            {% for item in expiring_items %}
-                <li style="background-color: #fff3cd; color: #856404; border: 1px solid #ffeeba; padding: 5px; margin-bottom: 5px; border-radius: 5px;">
-                    {{ item.name }} (Expires on {{ item.expiration_date.strftime('%Y-%m-%d') }})
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
+{% extends "base.html" %} {% block content %}
 
-<h4>What do you want to eat?</h4>
-<div class="row">
-    {% for recipe in recipes %}
-    <div class="col-4">
-        <a href="{{ url_for('recipe', id=recipe.id) }}">
-            <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-thumbnail">
-            <p class="text-center">{{ recipe.name }}</p>
-        </a>
+<head>
+  <style>
+    .title {
+      color: white;
+    }
+
+    .background {
+      background-color: #3a61e3;
+      position: absolute;
+      top: -20px;
+      left: 0px;
+      height: 150px;
+      width: 100%;
+      z-index: -1;
+      border-radius: 2px;
+    }
+
+    .summary_container {
+      box-sizing: border-box;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      width: 100%;
+      height: 90px;
+      border-radius: 5px;
+      background-color: white;
+      margin-top: 30px;
+      box-shadow: 0px 3px 5px 0px #e3e2e2;
+    }
+
+    .summary_box {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      flex: 1;
+    }
+
+    .summary_box > h6 {
+      font-size: 1.1rem;
+      margin: 0px;
+      font-weight: 700;
+    }
+
+    .summary_box > span {
+      color: rgb(164, 164, 164);
+      font-size: 1rem;
+      font-weight: 400;
+    }
+
+    .section_title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .list_container {
+      display: flex;
+      height: 150px;
+      gap: 20px;
+      /* border: 1px solid red; */
+    }
+
+    .list_box {
+      box-sizing: border-box;
+      padding: 10px;
+      border: 1px solid rgb(229, 229, 231);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      font-size: 0.7rem;
+      border-radius: 7px;
+      box-shadow: 0px 1px 7px 0px #f1efef;
+    }
+
+    .expired {
+      box-shadow: 0px 1px 7px 0px #fb9898;
+      border: 1px solid rgb(249, 181, 181);
+    }
+
+    .list_box.expiring_soon {
+      box-shadow: 0px 1px 7px 0px #fedb99;
+      border: 1px solid rgb(253, 215, 64);
+    }
+
+    .list_box::-webkit-scrollbar {
+      display: none;
+    }
+
+    .list_box img {
+      /* border: 1px solid red; */
+      box-sizing: border-box;
+      height: 80%;
+      aspect-ratio: 1/1;
+    }
+
+    .item_desc_box {
+      display: flex;
+      flex-direction: column;
+      gap: 0px;
+    }
+
+    .no_item_box {
+      width: 100%;
+      border: 1px solid rgb(230, 230, 230);
+      display: flex;
+      border-radius: 5px;
+      justify-content: center;
+      align-items: center;
+      color: rgb(192, 190, 190);
+    }
+  </style>
+</head>
+
+<div class="background"></div>
+<div class="container">
+  <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
+  <div class="col-md-6">
+    <div class="summary_container">
+      <div class="summary_box">
+        <h6>{{ total_items }}</h6>
+        <span>Total items</span>
+      </div>
+      <div class="summary_box">
+        <h6>{{ expired_items|length }}</h6>
+        <span>Expired items</span>
+      </div>
+      <div class="summary_box">
+        <h6>{{ expiring_items|length }}</h6>
+        <span>Expiring soon</span>
+      </div>
     </div>
-    {% endfor %}
+    <div class="col-md-6">
+      <h3 class="section_title">Expired Items</h3>
+      <div class="list_container">
+        {% if expired_items %} {% for item in expired_items %}
+        <div class="list_box expired">
+          <img src="{{item.images_url[0].image_url}}" />
+          <div class="list_box expired">
+            <img class="list_box_img" src="/static/uploads/chicken.jpg" />
+            <div class="item_desc_box">
+              <span>{{item.name}}</span>
+              <span>22/05/2024</span>
+            </div>
+          </div>
+          {{ item.name }} (Expired on {{
+          item.expiration_date.strftime('%Y-%m-%d') }})
+        </div>
+        {% endfor %} {% else %}
+        <div class="no_item_box">No expired item</div>
+        {% endif %}
+      </div>
+
+      <h3 class="section_title">Expiring Soon</h3>
+      <div class="list_container">
+        {% if expiring_items %} {% for item in expiring_items %}
+        <div class="list_box expiring_soon">
+          <img src="{{item.images_url[0].image_url}}" />
+          <div class="item_desc_box">
+            <span>{{ item.name }}</span>
+            <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
+          </div>
+        </div>
+        {% endfor %} {% else %}
+        <div class="no_item_box">No expiring item</div>
+        {% endif %}
+      </div>
+    </div>
+    <!-- <h3 class="section_title">Pantry Items</h3> -->
+  </div>
+
+  <h4 class="section_title">What do you want to eat?</h4>
+  <div class="list_container">
+    {% if recipe %} {% for recipe in recipes %}
+    <div class="list_box">
+      <a href="{{ url_for('recipe', id=recipe.id) }}">
+        <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" />
+        <div class="item_desc_box">
+          <span>{{ item.name }}</span>
+        </div>
+      </a>
+    </div>
+    {% endfor %} {% else %}
+    <div class="no_item_box">No recipe found</div>
+    {% endif %}
+  </div>
 </div>
 {% endblock %}
