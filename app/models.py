@@ -15,14 +15,21 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
     password_hash = db.Column(db.String(128), nullable=False)
+    full_name = db.Column(db.String(128), nullable=True)  # Optional field
+    email = db.Column(db.String(128), unique=True, nullable=True)  # Optional field
+    phone_number = db.Column(db.String(20), nullable=True)  # Optional field
+    dob = db.Column(db.Date, nullable=True)  # Optional field
+    weight = db.Column(db.Float, nullable=True)  # Optional field
+    height = db.Column(db.Float, nullable=True)  # Optional field
     pantry_items = db.relationship('PantryItem', backref='owner', lazy='dynamic')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
-	
+    
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
-        
+
+
 class PantryItem(db.Model):
 	__tablename__ = 'pantry_item'
 	user_id = db.Column(db.Integer, db.ForeignKey('user.id'))

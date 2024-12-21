@@ -24,6 +24,7 @@
         .navbar-bottom .nav-item {
             text-align: center;
             flex: 1;
+            flex-wrap: nowrap;
         }
         .navbar-bottom .nav-link {
             color: white;
@@ -47,7 +48,7 @@
     </div>
 
     <!-- Bottom Navbar -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark navbar-bottom">
+    <nav class="navbar navbar-expand navbar-dark bg-dark navbar-bottom">
         <div class="container-fluid">
             <ul class="navbar-nav">
                 {% if current_user.is_authenticated %}
@@ -75,12 +76,12 @@
                             <br>Account
                         </a>
                     </li>
-                    <li class="nav-item">
+                    <!-- <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('logout') }}">
                             <i class="fas fa-sign-out-alt"></i>
                             <br>Logout
                         </a>
-                    </li>
+                    </li> -->
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">

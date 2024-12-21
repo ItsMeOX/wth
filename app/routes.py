@@ -1,6 +1,6 @@
 from app import application
 from flask import render_template, flash, redirect, url_for
-from app.forms import LoginForm, RegistrationForm
+from app.forms import LoginForm, RegistrationForm, ProfileUpdateForm
 from flask_login import current_user, login_user, logout_user, login_required
 from app.models import User, PantryItem, Recipe, FoodImage
 from urllib.parse import urlparse, unquote
@@ -59,7 +59,6 @@ def inventory():
         db.session.commit()
         flash('Item added successfully!')
     items = PantryItem.query.filter_by(user_id=current_user.id).all()
-    # print(items[0].name)
     return render_template('inventory.html', title='Inventory', items=items)
 
 @application.route('/food/<int:food_id>')
@@ -114,7 +113,29 @@ def recipe(id):
 @application.route('/account', methods=['GET', 'POST'])
 @login_required
 def account():
-    return render_template('account.html', user=current_user)
+    form = ProfileUpdateForm()
+
+    if form.validate_on_submit():
+        current_user.full_name = form.full_name.data
+        current_user.email = form.email.data
+        current_user.phone_number = form.phone_number.data
+        current_user.dob = form.dob.data
+        current_user.weight = form.weight.data
+        current_user.height = form.height.data
+
+        db.session.commit()
+        flash('Your profile has been updated!', 'success')
+        return redirect(url_for('account'))
+
+    # Pre-fill the form with current user data
+    form.full_name.data = current_user.full_name
+    form.email.data = current_user.email
+    form.phone_number.data = current_user.phone_number
+    form.dob.data = current_user.dob
+    form.weight.data = current_user.weight
+    form.height.data = current_user.height
+
+    return render_template('account.html', title='Account', form=form)
 
 
 @application.route('/')
