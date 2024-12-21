@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 class="text-center">{{ food.name }}</h2>
+
+<!-- Image Gallery -->
+<div class="image-gallery">
+    <div id="foodImageCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            {% for image in food.image_urls %}
+            <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                <img src="{{ image.image_url }}" class="d-block w-100" alt="{{ food.name }}">
+            </div>
+            {% endfor %}
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+</div>
+
+<!-- Food Details -->
+<div class="food-details mt-4">
+    <h4>Category: {{ food.category }}</h4>
+    
+    <h4>Status:</h4>
+    <p class="badge {% if food.is_expired %}bg-danger{% elif food.is_near_expiry %}bg-warning{% else %}bg-success{% endif %}">
+        {% if food.is_expired %}
+            Expired
+        {% elif food.is_near_expiry %}
+            Near Expiry
+        {% else %}
+            Normal
+        {% endif %}
+    </p>
+
+    <p><strong>Weight:</strong> {{ food.weight }} g</p>
+    <p><strong>Calories:</strong> {{ food.calories }} kcal</p>
+</div>
+
+{% endblock %}
