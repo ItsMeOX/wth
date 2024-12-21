@@ -65,6 +65,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('upload_image')}}">
+                            <i class="fas fa-camera"></i>
+                            <br>Camera
+                        </a>
+                    </li> 
+                    <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('recipes') }}">
                             <i class="fas fa-utensils"></i>
                             <br>Recipes
@@ -75,13 +81,7 @@
                             <i class="fas fa-user"></i>
                             <br>Account
                         </a>
-                    </li>
-                    <!-- <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">
-                            <i class="fas fa-sign-out-alt"></i>
-                            <br>Logout
-                        </a>
-                    </li> -->
+                    </li>               
                 {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url_for('login') }}">
@@ -105,5 +105,42 @@
     </footer> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('cameraButton').addEventListener('click', async () => {
+            // Create a file input dynamically
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'camera';
+    
+            // Handle the file selection
+            input.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+    
+                    // Send the image to the server
+                    try {
+                        const response = await fetch('/process_image', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert(`Image processed successfully: ${result.message}`);
+                        } else {
+                            alert(`Error: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading image:', error);
+                        alert('Failed to process the image.');
+                    }
+                }
+            });
+    
+            input.click();
+        });
+    </script>    
 </body>
 </html>
