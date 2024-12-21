@@ -59,10 +59,10 @@ def inventory():
         db.session.commit()
         flash('Item added successfully!')
     items = PantryItem.query.filter_by(user_id=current_user.id).all()
-    print(items[0].name)
+    # print(items[0].name)
     return render_template('inventory.html', title='Inventory', items=items)
 
-@app.route('/food/<int:food_id>')
+@application.route('/food/<int:food_id>')
 def food_detail(food_id):
     food_item = PantryItem.query.get_or_404(food_id)
     return render_template('food_detail.html', food=food_item)
@@ -172,10 +172,6 @@ def upload_image():
 	return render_template('upload.html')
 
 @application.route('/uploads/<foodname>')
-<<<<<<< HEAD
-def uploaded_file(filename):
-    return f"File uploaded successfully: <img src='/static/uploads/{filename}' />"
-=======
 def uploaded_file(foodname):
     food = PantryItem.query.filter_by(name = foodname).first()
     image_path = food.image_path
@@ -183,4 +179,3 @@ def uploaded_file(foodname):
         image_path = image_path[3:]
     print(image_path)
     return f"File uploaded successfully: <img src='{image_path}' />"
->>>>>>> e1c1f46d7261dd794d4be22e830d7d877f3f1561

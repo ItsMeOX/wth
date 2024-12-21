@@ -12,15 +12,9 @@
         </tr>
     </thead>
     <tbody>
-<<<<<<< HEAD
-        {% for item in inventory %}
-        <tr class="{% if item.is_expired %}table-danger{% elif item.is_near_expiry %}table-warning{% endif %}">
-            <td><a href="{{ url_for('food_detail', food_id=item.id) }}">{{ item.name }}</a></td>
-=======
         {% for item in items %}
         <tr class="{% if item.is_expired() %}table-danger{% elif item.is_near_expiry() %}table-warning{% endif %}">
-            <td>{{ item.name }}</td>
->>>>>>> e1c1f46d7261dd794d4be22e830d7d877f3f1561
+            <td><a href="{{ url_for('food_detail', food_id=item.id) }}"></a>{{ item.name }}</td>
             <td>{{ item.category }}</td>
             <td>{{ item.weight }} g</td>
             <td>{{ item.expiration_date.strftime('%Y-%m-%d') }}</td>
