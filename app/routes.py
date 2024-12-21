@@ -208,14 +208,15 @@ def upload_image():
             db.session.commit()
 
             # Redirect to the uploaded file page or success page
-            return redirect(url_for('uploaded_file', foodname=new_item.name))
+            return redirect(url_for('uploaded_file', food_id=food_id))
 
     return render_template('upload.html')
 
-@application.route('/uploads/<foodname>')
-def uploaded_file(foodname):
-    food = PantryItem.query.filter_by(name = foodname).first()
-    image_path = food.image_urls[0]
-    
+@application.route('/uploads/<food_id>')
+def uploaded_file(food_id):
+    food = PantryItem.query.filter_by(id = food_id).first()
+    image_path = food.image_urls[0].image_url
+    if image_path.startswith('app'):
+        image_path = image_path[3:]
     flash(f"File uploaded successfully")
     return render_template('upload.html')
