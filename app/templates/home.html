@@ -5,11 +5,11 @@
     .title {
       color: white;
     }
-    .logo{
-      position:absolute;
+    .logo {
+      position: absolute;
       top: 0;
       left: 0;
-      width:100px;
+      width: 100px;
     }
     .background {
       background-color: #3a61e3;
@@ -80,7 +80,7 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       border-radius: 7px;
       box-shadow: 0px 0px 7px 0px #f1efef;
       text-decoration: none;
@@ -136,13 +136,62 @@
       align-items: center;
       color: rgb(192, 190, 190);
     }
+
+    .recipe_container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .recipe_box {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      padding-top: 5px;
+      border: 1px solid rgb(93, 130, 255);
+      border-radius: 5px;
+      box-shadow: 0px 0px 7px 0px #f1efef;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* .recipe_box_content {
+    } */
+
+    /* recipe title */
+    .recipe_box_title {
+      color: rgb(116, 148, 253);
+      font-weight: 600;
+    }
+
+    /* ingredients */
+    .recipe_box_content span:first-of-type {
+      font-weight: 600;
+      display: block;
+      width: 100%;
+    }
+
+    /* steps */
+    .recipe_box_content span:nth-of-type(2) {
+      width: 100%;
+      line-height: 1;
+      display: -webkit-box; /* Use a flexbox-like layout with a defined box orientation */
+      -webkit-line-clamp: 3; /* Clamp to 3 lines */
+      line-clamp: 3;
+      -webkit-box-orient: vertical; /* Set orientation to vertical */
+      overflow: hidden; /* Hide overflowing text */
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
-<img class="logo" src="static\pics\logo.png" alt="Logo">
+<img class="logo" src="static\pics\logo.png" alt="Logo" />
 <div class="background"></div>
 <div class="container">
   <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
-  
+
   <div class="col-md-6">
     <div class="summary_container">
       <div class="summary_box">
@@ -199,18 +248,41 @@
   </div>
 
   <h4 class="section_title">What do you want to eat?</h4>
-  <div class="list_container">
-    {% if recipe %} {% for recipe in recipes %}
-    <div class="list_box">
-      <a   href="{{ url_for('recipe', id=recipe.id) }}">
-        <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" />
-        <div class="item_desc_box">
-          <span>{{ item.name }}</span>
+  <div class="recipe_container">
+    <div class="row">
+      {% if recipes %} {% for recipe in recipes %}
+      <div class="col-md-6 col-lg-4 mb-4">
+        <div
+          class="card shadow-sm"
+          style="border-radius: 15px; background-color: #fff"
+        >
+          <div class="card-body">
+            <h5 class="card-title" style="color: #006600">
+              <a
+                href="{{ url_for('recipe', id=recipe.id) }}"
+                class="text-decoration-none"
+                style="color: #006600"
+              >
+                {{ recipe.name or "Unnamed Recipe" }}
+              </a>
+            </h5>
+            <p class="card-text">
+              <strong>Ingredients:</strong> {{ recipe.ingredients[:50] }}...
+            </p>
+            <p class="card-text">
+              <strong>Steps:</strong> {{ recipe.steps[:50] }}...
+            </p>
+            <small class="text-muted"
+              >Last updated: {{ recipe.created_at.strftime('%Y-%m-%d') }}</small
+            >
+          </div>
         </div>
-      </a>
+      </div>
     </div>
     {% endfor %} {% else %}
-    <div class="no_item_box">No recipe found</div>
+    <div class="no_item_box">
+      No recipe available yet. Share your culinary creations!
+    </div>
     {% endif %}
   </div>
 </div>
