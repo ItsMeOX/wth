@@ -2,9 +2,14 @@
 
 <head>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
     .title {
       color: white;
-    }
+      font-family: "Chewy", serif;
+      font-weight: 400;
+      font-style: normal;
+     }
+
     .logo{
       position:absolute;
       top: 0;
@@ -56,6 +61,8 @@
     }
 
     .section_title {
+      font-family: "Chewy", serif;
+      font-style: normal;
       font-size: 1rem;
       font-weight: 600;
       margin-top: 20px;
@@ -141,7 +148,7 @@
 <img class="logo" src="static\pics\logo.png" alt="Logo">
 <div class="background"></div>
 <div class="container">
-  <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
+    <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
   
   <div class="col-md-6">
     <div class="summary_container">
