@@ -192,7 +192,7 @@ def upload_image():
                 filepath = filepath[3:]
             # Create a new pantry item
             new_item = PantryItem(
-                name="Granola",  # This can be dynamic
+                name="Granola this is a very long text yooooooo",  # This can be dynamic
                 brand="No Brand",  # This can be dynamic
                 category="Dessert",  # This can be dynamic
                 used=False,
