@@ -5,7 +5,12 @@
     .title {
       color: white;
     }
-
+    .logo{
+      position:absolute;
+      top: 0;
+      left: 0;
+      width:100px;
+    }
     .background {
       background-color: #3a61e3;
       position: absolute;
@@ -116,10 +121,11 @@
     }
   </style>
 </head>
-
+<img class="logo" src="static\pics\logo.png" alt="Logo">
 <div class="background"></div>
 <div class="container">
   <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
+  
   <div class="col-md-6">
     <div class="summary_container">
       <div class="summary_box">
