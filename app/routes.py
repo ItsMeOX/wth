@@ -192,13 +192,13 @@ def upload_image():
                 filepath = filepath[3:]
             # Create a new pantry item
             new_item = PantryItem(
-                name="Granola",  # This can be dynamic
+                name="Granola this is a very long text yooooooo",  # This can be dynamic
                 brand="No Brand",  # This can be dynamic
                 category="Dessert",  # This can be dynamic
                 used=False,
                 out_of_stock=False,
                 weight=120.0,  # This can be dynamic
-                expiration_date=datetime(2024, 12, 25),
+                expiration_date=datetime(2020, 12, 25),
                 calories=520.0,
                 nutrition_content="Protein: 110g, Carbs: 97g, Fats: 10g",
                 user_id=current_user.id

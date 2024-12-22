@@ -67,52 +67,69 @@
       height: 150px;
       gap: 20px;
       overflow-x: scroll;
-      /* border: 1px solid red; */
+      box-sizing: border-box;
+      padding: 4px;
     }
 
     .list_box {
+      /* hardcoded width */
+      width: 106px;
       box-sizing: border-box;
-      padding: 10px;
+      padding-bottom: 10px;
       border: 1px solid rgb(229, 229, 231);
       display: flex;
       flex-direction: column;
       align-items: center;
       font-size: 0.7rem;
       border-radius: 7px;
-      box-shadow: 0px 1px 7px 0px #f1efef;
+      box-shadow: 0px 0px 7px 0px #f1efef;
+      text-decoration: none;
+      color: inherit;
     }
 
     .expired {
-      box-shadow: 0px 1px 7px 0px #fb9898;
+      box-shadow: 0px 0px 7px 0px #faa4a4;
       border: 1px solid rgb(249, 181, 181);
     }
 
     .list_box.expiring_soon {
-      box-shadow: 0px 1px 7px 0px #fedb99;
-      border: 1px solid rgb(253, 215, 64);
+      box-shadow: 0px 0px 7px 0px #fedb99;
+      border: 1px solid rgb(252, 218, 51);
     }
 
     .list_container::-webkit-scrollbar {
-        display: none;
-      }
+      display: none;
+    }
 
     .list_box img {
       /* border: 1px solid red; */
       box-sizing: border-box;
       height: 80%;
       aspect-ratio: 1/1;
+      border-radius: 7px 7px 0 0;
     }
 
     .item_desc_box {
+      width: 100%;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0px;
+      font-weight: 600;
+    }
+
+    .item_desc_box span:first-of-type {
+      text-align: center;
+      /* hardcoded width */
+      width: 98px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .no_item_box {
       width: 100%;
-      border: 1px solid rgb(230, 230, 230);
+      border: 1px solid rgb(212, 212, 212);
       display: flex;
       border-radius: 5px;
       justify-content: center;
@@ -145,15 +162,16 @@
       <h3 class="section_title">Expired Items</h3>
       <div class="list_container">
         {% if expired_items %} {% for item in expired_items %}
-        <div class="list_box expired">
-          <!-- <img src="{{item.image_urls[0].image_url}}" /> -->
-            <img class="list_box_img" src="{{item.image_urls[0].image_url}}" />
-            <div class="item_desc_box">
-              <span>{{item.name}}</span>
-              <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
-            </div>
-
-        </div>
+        <a
+          class="list_box expired"
+          href="{{ url_for('food_detail', food_id=item.id) }}"
+        >
+          <img class="list_box_img" src="{{item.image_urls[0].image_url}}" />
+          <div class="item_desc_box">
+            <span>{{item.name}}</span>
+            <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
+          </div>
+        </a>
         {% endfor %} {% else %}
         <div class="no_item_box">No expired item</div>
         {% endif %}
@@ -162,13 +180,16 @@
       <h3 class="section_title">Expiring Soon</h3>
       <div class="list_container">
         {% if expiring_items %} {% for item in expiring_items %}
-        <div class="list_box expiring_soon">
+        <a
+          class="list_box expiring_soon"
+          href="{{ url_for('food_detail', food_id=item.id) }}"
+        >
           <img src="{{item.image_urls[0].image_url}}" />
           <div class="item_desc_box">
             <span>{{ item.name }}</span>
             <span>{{ item.expiration_date.strftime('%Y-%m-%d') }}</span>
           </div>
-        </div>
+        </a>
         {% endfor %} {% else %}
         <div class="no_item_box">No expiring item</div>
         {% endif %}
@@ -181,7 +202,7 @@
   <div class="list_container">
     {% if recipe %} {% for recipe in recipes %}
     <div class="list_box">
-      <a href="{{ url_for('recipe', id=recipe.id) }}">
+      <a   href="{{ url_for('recipe', id=recipe.id) }}">
         <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" />
         <div class="item_desc_box">
           <span>{{ item.name }}</span>
