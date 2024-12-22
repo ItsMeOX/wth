@@ -14,8 +14,18 @@
 
 <div>
   <style>
+    .capture_button{
+      background-color: #000000; /* Green background */
+      color: rgb(255, 255, 255);
+      padding: 14px 28px;
+      font-size: 18px;
+      border: none;
+      border-radius: 50px; /* Fully rounded */
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
     body{
-      background-color: rgb(81, 113, 255);
+      background-color: #3a61e3;
     }
       .container {
         display: flex;
@@ -46,12 +56,12 @@
   
   <h1 class="take_photo">Take a Photo of Your Food!</h1>
   <!-- Video element to stream webcam -->
-  <video id="video" autoplay></video>
+  <video id="video" style="border: 2px solid black" autoplay></video>
   <canvas id="canvas" style="border: 1px solid red; display: none"></canvas>
 
 
   <!-- Button to capture the image -->
-      <button id="capture" class="button">Capture Image</button>
+      <button id="capture" class="capture_button">Capture Image</button>
       <!-- Form to upload the captured image -->
       <form id="uploadForm" method="POST" action="{{ url_for('upload_image') }}" enctype="multipart/form-data">
           <input type="file" id="imageInput" name="file" style="display:none;" />
