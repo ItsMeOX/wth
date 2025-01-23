@@ -1,19 +1,105 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center">Select Ingredients for Recipes</h2>
+
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+        .page_title {
+            font-family: "Chewy", serif;
+            display: block;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .category_name {
+            color: #4c4d52;
+            font-size: 1.4rem;
+            display: block;
+            text-align: center;
+        }
+
+        .items_container {
+            display: flex; /* Enables a flexible layout */
+            justify-content: space-around;
+            flex-wrap: wrap; /* Allows wrapping to the next line */
+            gap: 10px; /* Adds spacing between items */
+            box-sizing: border-box;
+            padding-inline: 5px;
+        }
+
+        .item_box {
+            display: flex;
+            align-items: center; /* Aligns checkbox and label */
+            gap: 5px;
+            border: 1px solid #ddd; /* Optional: Add a border */
+            padding: 15px;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+            box-sizing: border-box; /* Ensures padding doesn't exceed width */
+            transition: color border 0.5s linear;
+        }
+        
+        .item_box:has(input[type="checkbox"]:checked) {
+            border: 2px solid #3a61e3;
+            color: #3a61e3;
+        }
+
+        .item_box input {
+            display: none;
+        }
+
+        .submit_button_box {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        .submit_button {
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3a61e3;
+            color: white;
+        }
+
+        .no_item_box {
+            width: 100%;
+            margin-block: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        .no_item_box span {
+            display: block;
+            margin-inline: auto;
+            color: rgb(193, 193, 193);
+        }
+    </style>
+</head>
+
+<h1 class="page_title">AI Recipe Suggestions</h1>
 <form method="POST">
-    <div class="row mt-4">
-        {% for item in items %}
-        <div class="col-md-4">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" name="items" value="{{ item.name }}" id="item{{ loop.index }}">
-                <label class="form-check-label" for="item{{ loop.index }}">{{ item.name }}</label>
-            </div>
+    {% for category, items in categories.items() %}
+        <h2 class="category_name">{{ category }}</h2>
+        <div class="items_container">
+            {% if items %}
+                {% for item in items %}
+                    <div class="item_box">
+                        <input type="checkbox" name="ingredients" value="{{ item.name }}" id="{{ item.id }}">
+                        <label for="{{ item.id }}">{{ item.name }}</label>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="no_item_box">
+                    <span>No item yet</span>
+                </div>
+            {% endif %}
         </div>
-        {% endfor %}
-    </div>
-    <div class="text-center mt-4">
-        <button type="submit" class="btn btn-primary">Get Recipe Suggestions</button>
+        <hr />
+    {% endfor %}
+    <div class="submit_button_box">
+        <button class="submit_button" type="submit">Give me the Recipe!</button>
     </div>
 </form>
 {% endblock %}

@@ -14,6 +14,9 @@ bootstrap-flask = "*"
 importlib-resources = "*"
 colorama = "*"
 Werkzeug = "==3.0.1"
+python-dotenv = "*"
+pillow = "*"
+google-generativeai = "*"
 
 [dev-packages]
 

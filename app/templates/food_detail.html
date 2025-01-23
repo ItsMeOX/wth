@@ -1,45 +1,79 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center">{{ food.name }}</h2>
+<div class="container mt-5">
+    <!-- Food Name -->
+    <h2 class="text-center mb-4">{{ food.name }}</h2>
 
-<!-- Image Gallery -->
-<div class="image-gallery">
-    <div id="foodImageCarousel" class="carousel slide" data-bs-ride="carousel">
-        <div class="carousel-inner">
-            {% for image in food.image_urls %}
-            <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
-                <img src="{{ image.image_url }}" class="d-block w-100" alt="{{ food.name }}">
+    <!-- Image Gallery -->
+    <div class="image-gallery">
+        <div id="foodImageCarousel" class="carousel slide shadow-lg" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in food.image_urls %}
+                <div class="carousel-item {% if loop.index == 1 %}active{% endif %}">
+                    <img src="{{ image.image_url }}" class="d-block w-100 rounded" alt="{{ food.name }}">
+                </div>
+                {% endfor %}
             </div>
-            {% endfor %}
+            <button class="carousel-control-prev" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
         </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#foodImageCarousel" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
     </div>
-</div>
 
-<!-- Food Details -->
-<div class="food-details mt-4">
-    <h4>Category: {{ food.category }}</h4>
-    
-    <h4>Status:</h4>
-    <p class="badge {% if food.is_expired() %}bg-danger{% elif food.is_near_expiry() %}bg-warning{% else %}bg-success{% endif %}">
-        {% if food.is_expired() %}
-            Expired
-        {% elif food.is_near_expiry() %}
-            Near Expiry
-        {% else %}
-            Normal
-        {% endif %}
-    </p>
+    <!-- Food Details -->
+    <div class="food-details mt-5">
+        <div class="row">
+            <!-- Left Column -->
+            <div class="col-md-6">
+                <h4>Details</h4>
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Category:</strong> {{ food.category }}</li>
+                    <li class="list-group-item"><strong>Brand:</strong> {{ food.brand or 'Unknown' }}</li>
+                    <li class="list-group-item"><strong>Weight:</strong> {{ food.weight or 'N/A' }} g</li>
+                    <li class="list-group-item"><strong>Calories:</strong> {{ food.calories or 'N/A' }} kcal</li>
+                    <li class="list-group-item"><strong>Added Date:</strong> {{ food.added_date.strftime('%d %B %Y') }}</li>
+                    <li class="list-group-item"><strong>Expiration Date:</strong> 
+                        {{ food.expiration_date.strftime('%d %B %Y') }}
+                    </li>
+                </ul>
+            </div>
 
-    <p><strong>Weight:</strong> {{ food.weight }} g</p>
-    <p><strong>Calories:</strong> {{ food.calories }} kcal</p>
+            <!-- Right Column -->
+            <div class="col-md-6">
+                <h4>Status</h4>
+                <p>
+                    <span class="badge {% if food.is_expired() %}bg-danger{% elif food.is_near_expiry() %}bg-warning{% else %}bg-success{% endif %}">
+                        {% if food.is_expired() %}
+                            Expired
+                        {% elif food.is_near_expiry() %}
+                            Near Expiry
+                        {% else %}
+                            Normal
+                        {% endif %}
+                    </span>
+                </p>
+
+                <h4>Nutrition Content</h4>
+                <p>{{ food.nutrition_content or 'No detailed nutrition content available.' }}</p>
+
+                <h4>Out of Stock</h4>
+                <p>
+                    <span class="badge {% if food.out_of_stock %}bg-danger{% else %}bg-success{% endif %}">
+                        {% if food.out_of_stock %}
+                            Out of Stock
+                        {% else %}
+                            In Stock
+                        {% endif %}
+                    </span>
+                </p>
+            </div>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

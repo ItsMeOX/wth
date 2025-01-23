@@ -1,14 +1,21 @@
 {% extends "base.html" %} {% block content %}
-
 <head>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Chewy&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+    /* .container {
+    } */
+
     .title {
       color: white;
+      font-family: 'Chewy', serif;
+      font-weight: 400;
+      font-style: normal;
     }
     .logo {
       position: absolute;
-      top: 0;
-      left: 0;
+      top: -95%;
+      left: 3%;
       width: 100px;
     }
     .background {
@@ -23,6 +30,7 @@
     }
 
     .summary_container {
+      position: relative;
       box-sizing: border-box;
       padding: 10px;
       display: flex;
@@ -56,7 +64,9 @@
     }
 
     .section_title {
-      font-size: 1rem;
+      /* font-family: "Chewy", serif; */
+      /* font-style: normal; */
+      font-size: 1.25rem;
       font-weight: 600;
       margin-top: 20px;
       margin-bottom: 10px;
@@ -64,6 +74,8 @@
 
     .list_container {
       display: flex;
+      /* border: 1px solid red; */
+      width: 100%;
       height: 150px;
       gap: 20px;
       overflow-x: scroll;
@@ -187,13 +199,12 @@
     }
   </style>
 </head>
-<img class="logo" src="static\pics\logo.png" alt="Logo" />
 <div class="background"></div>
 <div class="container">
   <h2 class="text-center title">Welcome, {{ current_user.username }}!</h2>
-
-  <div class="col-md-6">
+  <div class="">
     <div class="summary_container">
+      <img class="logo" src="static\pics\logo.png" alt="Logo" />
       <div class="summary_box">
         <h6>{{ total_items }}</h6>
         <span>Total items</span>
@@ -207,14 +218,13 @@
         <span>Expiring soon</span>
       </div>
     </div>
-    <div class="col-md-6">
-      <h3 class="section_title">Expired Items</h3>
+    <div class="">
+      <h3 class="section_title">Expired</h3>
       <div class="list_container">
         {% if expired_items %} {% for item in expired_items %}
         <a
           class="list_box expired"
-          href="{{ url_for('food_detail', food_id=item.id) }}"
-        >
+          href="{{ url_for('food_detail', food_id=item.id) }}">
           <img class="list_box_img" src="{{item.image_urls[0].image_url}}" />
           <div class="item_desc_box">
             <span>{{item.name}}</span>
@@ -231,8 +241,7 @@
         {% if expiring_items %} {% for item in expiring_items %}
         <a
           class="list_box expiring_soon"
-          href="{{ url_for('food_detail', food_id=item.id) }}"
-        >
+          href="{{ url_for('food_detail', food_id=item.id) }}">
           <img src="{{item.image_urls[0].image_url}}" />
           <div class="item_desc_box">
             <span>{{ item.name }}</span>
@@ -251,18 +260,16 @@
   <div class="recipe_container">
     <div class="row">
       {% if recipes %} {% for recipe in recipes %}
-      <div class="col-md-6 col-lg-4 mb-4">
+      <div>
         <div
           class="card shadow-sm"
-          style="border-radius: 15px; background-color: #fff"
-        >
+          style="border-radius: 15px; background-color: #fff">
           <div class="card-body">
             <h5 class="card-title" style="color: #006600">
               <a
                 href="{{ url_for('recipe', id=recipe.id) }}"
                 class="text-decoration-none"
-                style="color: #006600"
-              >
+                style="color: #006600">
                 {{ recipe.name or "Unnamed Recipe" }}
               </a>
             </h5>

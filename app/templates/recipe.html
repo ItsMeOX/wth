@@ -1,23 +1,133 @@
 {% extends "base.html" %}
 {% block content %}
-<h2 class="text-center">{{ recipe.name }}</h2>
-<div class="row mt-4">
-    <div class="col-md-6">
-        <img src="{{ recipe.image_url }}" alt="{{ recipe.name }}" class="img-fluid">
-    </div>
-    <div class="col-md-6">
-        <h4>Ingredients</h4>
-        <ul>
-            {% for ingredient in recipe.ingredients %}
-            <li>{{ ingredient }}</li>
-            {% endfor %}
-        </ul>
-        <h4>Steps</h4>
-        <ol>
-            {% for step in recipe.steps %}
-            <li>{{ step }}</li>
-            {% endfor %}
-        </ol>
-    </div>
+<head>
+  <style>
+    /* Background and general styling */
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f7fc;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      margin: 50px auto;
+      max-width: 800px;
+      padding: 20px;
+      background-color: #ffffff;
+      border-radius: 10px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Header styles */
+    .recipe_header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .recipe_title {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #006600;
+      margin-bottom: 10px;
+    }
+
+    .recipe_subtitle {
+      font-size: 1.25rem;
+      font-weight: 500;
+      color: #555;
+    }
+
+    /* Section titles */
+    .recipe_section {
+      margin-bottom: 40px;
+    }
+
+    .section_title {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: #3a61e3;
+      border-bottom: 2px solid #3a61e3;
+      padding-bottom: 5px;
+      margin-bottom: 20px;
+    }
+
+    /* Ingredients and steps lists */
+    .ingredients_list, .steps_list {
+      padding: 0;
+      margin: 0;
+      list-style: none;
+    }
+
+    .ingredients_list li, .steps_list li {
+      background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+      font-size: 1rem;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .steps_list li {
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      font-weight: 600;
+    }
+
+    /* No recipe fallback box */
+    .no_recipe_box {
+      text-align: center;
+      padding: 20px;
+      background: #fff3e0;
+      border: 1px solid #ffcc80;
+      border-radius: 8px;
+      color: #ff6f00;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    /* Add some hover effects */
+    .ingredients_list li:hover, .steps_list li:hover {
+      transform: translateY(-3px);
+      box-shadow: 0px 5px 10px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease-in-out;
+    }
+  </style>
+</head>
+
+<div class="container">
+  <div class="recipe_header">
+    <h1 class="recipe_title">{{ recipe.name or "Recipe Not Found" }}</h1>
+    {% if recipe %}
+    <p class="recipe_subtitle">Crafted with love, just for you!</p>
+    {% else %}
+    <p class="recipe_subtitle">Sorry, no recipe available!</p>
+    {% endif %}
+  </div>
+
+  {% if recipe %}
+  <div class="recipe_section">
+    <h2 class="section_title">Ingredients</h2>
+    <ul class="ingredients_list">
+      {% for ingredient in recipe.ingredients %}
+      <li>{{ ingredient }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="recipe_section">
+    <h2 class="section_title">Steps</h2>
+    <ol class="steps_list">
+      {% for step in recipe.steps %}
+      <li>{{ step }}</li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% else %}
+  <div class="no_recipe_box">
+    <p>No recipe details are available at the moment. Check back later!</p>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

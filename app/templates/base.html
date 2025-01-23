@@ -1,119 +1,114 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }} | Smart Pantry Assistant</title>
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-    />
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
-    />
-    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"> <!-- FontAwesome for icons -->
     <style>
-      .content {
-        box-sizing: border-box;
-        padding-top: 20px;
-        overflow-x: hidden;
-        margin-bottom: 120px;
-      }
-
-      body::-webkit-scrollbar {
-        display: none;
-      }
-
-      .navbar-bottom {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        background-color: #343a40;
-        z-index: 9999;
-      }
-      .navbar-bottom .navbar-nav {
-        display: flex;
-        justify-content: space-around;
-        width: 100%;
-        flex-wrap: nowrap;
-      }
-      .navbar-bottom .nav-item {
-        text-align: center;
-        flex: 1;
-        flex-wrap: nowrap;
-      }
-      .navbar-bottom .nav-link {
-        color: white;
-        display: block;
-        padding: 10px 0;
-      }
-      .navbar-bottom .nav-link:hover {
-        color: #007bff;
-      }
-
-      @media (max-width: 576px) {
-        .navbar-bottom .navbar-nav {
-          justify-content: space-between;
+        .content {
+          box-sizing: border-box;
+          padding-top: 20px;
+          overflow-x: hidden;
+          margin-bottom: 120px;
         }
-      }
-    </style>
-  </head>
-  <body>
-    <div class="content">{% block content %}{% endblock %}</div>
+  
+        body::-webkit-scrollbar {
+          display: none;
+        }
+  
+        .navbar-bottom {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          width: 100%;
+          background-color: #343a40;
+          z-index: 9999;
+        }
+        .navbar-bottom .navbar-nav {
+          display: flex;
+          justify-content: space-around;
+          width: 100%;
+          flex-wrap: nowrap;
+        }
+        .navbar-bottom .nav-item {
+          text-align: center;
+          flex: 1;
+          flex-wrap: nowrap;
+        }
+        .navbar-bottom .nav-link {
+          color: white;
+          display: block;
+          padding: 10px 0;
+        }
+        .navbar-bottom .nav-link:hover {
+          color: #007bff;
+        }
+  
+        @media (max-width: 576px) {
+          .navbar-bottom .navbar-nav {
+            justify-content: space-between;
+          }
+        }
+    </style>    
+</head>
+<body>
+    <div class="content mt-4">
+        {% block content %}{% endblock %}
+    </div>
 
     <!-- Bottom Navbar -->
     <nav class="navbar navbar-expand navbar-dark bg-dark navbar-bottom">
-      <div class="container-fluid">
-        <ul class="navbar-nav">
-          {% if current_user.is_authenticated %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('home') }}">
-              <i class="fas fa-home"></i>
-              <br />Home
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('inventory') }}">
-              <i class="fas fa-cogs"></i>
-              <br />Inventory
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('upload_image')}}">
-              <i class="fas fa-camera"></i>
-              <br />Camera
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('recipes') }}">
-              <i class="fas fa-utensils"></i>
-              <br />Recipes
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('account') }}">
-              <i class="fas fa-user"></i>
-              <br />Account
-            </a>
-          </li>
-          {% else %}
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('login') }}">
-              <i class="fas fa-sign-in-alt"></i>
-              <br />Login
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('register') }}">
-              <i class="fas fa-user-plus"></i>
-              <br />Register
-            </a>
-          </li>
-          {% endif %}
-        </ul>
-      </div>
+        <div class="container-fluid">
+            <ul class="navbar-nav">
+                {% if current_user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('home') }}">
+                            <i class="fas fa-home"></i>
+                            <br>Home
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('inventory') }}">
+                            <i class="fas fa-cogs"></i>
+                            <br>Inventory
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('upload_image')}}">
+                            <i class="fas fa-camera"></i>
+                            <br>Camera
+                        </a>
+                    </li> 
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('recipes') }}">
+                            <i class="fas fa-utensils"></i>
+                            <br>Recipes
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('account') }}">
+                            <i class="fas fa-user"></i>
+                            <br>Account
+                        </a>
+                    </li>               
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="fas fa-sign-in-alt"></i>
+                            <br>Login
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('register') }}">
+                            <i class="fas fa-user-plus"></i>
+                            <br>Register
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
     </nav>
 
     <!-- <footer class="text-center mt-4 py-3 bg-light">
@@ -121,16 +116,42 @@
     </footer> -->
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.getElementById('cameraButton').addEventListener('click', async () => {
+            // Create a file input dynamically
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.capture = 'camera';
+    
+            // Handle the file selection
+            input.addEventListener('change', async (event) => {
+                const file = event.target.files[0];
+                if (file) {
+                    const formData = new FormData();
+                    formData.append('file', file);
+    
+                    // Send the image to the server
+                    try {
+                        const response = await fetch('/process_image', {
+                            method: 'POST',
+                            body: formData
+                        });
+                        const result = await response.json();
+                        if (response.ok) {
+                            alert(`Image processed successfully: ${result.message}`);
+                        } else {
+                            alert(`Error: ${result.error}`);
+                        }
+                    } catch (error) {
+                        console.error('Error uploading image:', error);
+                        alert('Failed to process the image.');
+                    }
+                }
+            });
+    
+            input.click();
+        });
+    </script>    
 </body>
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-messages">
-      {% for category, message in messages %}
-        <div class="alert alert-info" role="alert">
-          {{ message | safe }}
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
 </html>
